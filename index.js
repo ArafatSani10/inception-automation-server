@@ -46,19 +46,42 @@ async function run() {
             const query = { _id: new ObjectId(id) }
             const result = await featuredCourseCollection.findOne(query);
             res.send(result);
-        })
+        });
 
+        // Newest course er jonno
+        const newestCourseCollection = client.db("courseDB").collection('newest');
+        app.post("/newest", async (req, res) => {
+            const newestCourse = req.body;
+            console.log(newestCourse);
+            const result = await newestCourseCollection.insertOne(newestCourse);
+            res.send(result)
+        });
+        app.get('/newest', async (req, res) => {
+            const cursor = newestCourseCollection.find();
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+        app.get('/newest/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await newestCourseCollection.findOne(query);
+            res.send(result);
+        });
 
+        // Instructorder jonno
+        const instructorsCollection = client.db("courseDB").collection('Instructors');
+        app.post("/instructor", async(req,res) =>{
+            const Instructors = req.body;
+            console.log(Instructors);
+            const result = await instructorsCollection.insertOne(Instructors);
+            res.send(result);
+        });
 
-
-
-
-
-
-
-
-
-
+        app.get('/instructor', async(req,res) =>{
+            const cursor = instructorsCollection.find();
+            const result = await cursor.toArray();
+            res.send(result)
+        });
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
@@ -69,16 +92,6 @@ async function run() {
     }
 }
 run().catch(console.dir);
-
-
-
-
-
-
-
-
-
-
 
 app.get('/', (req, res) => {
     res.send('inception automation server is running..')
